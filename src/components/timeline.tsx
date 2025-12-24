@@ -105,7 +105,7 @@ export function Timeline({ models, isLoading }: TimelineProps) {
             </div>
 
             {/* Models for this date */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
               {dateModels.map((model) => (
                 <ModelCard key={model.id} model={model} />
               ))}

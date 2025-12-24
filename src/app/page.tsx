@@ -173,11 +173,11 @@ export default function Home() {
         lastUpdated={lastUpdated}
       />
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar */}
-          <aside className="w-full lg:w-72 shrink-0">
-            <div className="sticky top-24">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
+          {/* Sidebar - Hidden on mobile, shown in collapsible on tablet+ */}
+          <aside className="w-full lg:w-72 shrink-0 order-2 lg:order-1">
+            <div className="lg:sticky lg:top-20">
               <SidebarFilters
                 selectedProviders={selectedProviders}
                 selectedTypes={selectedTypes}
@@ -190,10 +190,10 @@ export default function Home() {
           </aside>
 
           {/* Main Content */}
-          <main className="flex-1 min-w-0">
-            <div className="mb-6">
-              <h1 className="text-3xl font-bold mb-2">AI Model Releases</h1>
-              <p className="text-muted-foreground">
+          <main className="flex-1 min-w-0 order-1 lg:order-2">
+            <div className="mb-4 sm:mb-6">
+              <h1 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">AI Model Releases</h1>
+              <p className="text-sm sm:text-base text-muted-foreground">
                 Track the latest AI model releases from leading labs. Updated every 4 hours.
               </p>
             </div>
@@ -204,13 +204,13 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t mt-16">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-sm text-muted-foreground">
+      <footer className="border-t mt-8 sm:mt-16">
+        <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-center sm:text-left">
+            <p className="text-xs sm:text-sm text-muted-foreground">
               Powered by AI research agents using Perplexity, Grok, and Gemini.
             </p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs sm:text-sm text-muted-foreground">
               Data sourced from official announcements and documentation.
             </p>
           </div>

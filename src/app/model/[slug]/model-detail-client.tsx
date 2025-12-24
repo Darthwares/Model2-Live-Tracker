@@ -58,25 +58,25 @@ export function ModelDetailClient({ model }: ModelDetailClientProps) {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4">
-          <div className="flex h-16 items-center gap-4">
-            <Button variant="ghost" size="icon" asChild>
+        <div className="container mx-auto px-3 sm:px-4">
+          <div className="flex h-14 sm:h-16 items-center gap-2 sm:gap-4">
+            <Button variant="ghost" size="icon" asChild className="shrink-0">
               <Link href="/">
-                <ArrowLeft className="h-5 w-5" />
+                <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
                 <span className="sr-only">Back to home</span>
               </Link>
             </Button>
-            <div className="flex-1">
-              <h1 className="text-lg font-semibold">{model.name}</h1>
+            <div className="flex-1 min-w-0">
+              <h1 className="text-base sm:text-lg font-semibold truncate">{model.name}</h1>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Hero Section */}
-        <div className="mb-8">
-          <div className="flex flex-wrap items-center gap-3 mb-4">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
             <Badge
               variant="outline"
               className={providerColors[model.provider] || 'bg-gray-500/10 text-gray-400'}
@@ -95,60 +95,62 @@ export function ModelDetailClient({ model }: ModelDetailClientProps) {
               </Badge>
             )}
             {model.parameters && (
-              <Badge variant="secondary">{model.parameters}</Badge>
+              <Badge variant="secondary" className="hidden sm:inline-flex">{model.parameters}</Badge>
             )}
           </div>
 
-          <h1 className="text-4xl font-bold mb-4">{model.name}</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">{model.name}</h1>
 
-          <div className="flex items-center gap-4 text-muted-foreground mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6">
             <span className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              Released {format(new Date(model.releaseDate), 'MMMM d, yyyy')}
+              <Calendar className="h-4 w-4 shrink-0" />
+              Released {format(new Date(model.releaseDate), 'MMM d, yyyy')}
             </span>
             {model.contextWindow && (
-              <span>
+              <span className="sm:border-l sm:pl-4 sm:border-muted">
                 Context: {(model.contextWindow / 1000).toFixed(0)}K tokens
               </span>
             )}
           </div>
 
           {model.description && (
-            <p className="text-lg text-muted-foreground max-w-3xl">
+            <p className="text-base sm:text-lg text-muted-foreground max-w-3xl">
               {model.description}
             </p>
           )}
 
           {/* Quick Links */}
-          <div className="flex flex-wrap gap-3 mt-6">
+          <div className="flex flex-wrap gap-2 sm:gap-3 mt-4 sm:mt-6">
             {model.documentationUrl && (
-              <Button asChild>
+              <Button asChild size="sm" className="sm:size-default">
                 <a href={model.documentationUrl} target="_blank" rel="noopener noreferrer">
-                  <FileText className="h-4 w-4 mr-2" />
-                  Documentation
+                  <FileText className="h-4 w-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Documentation</span>
+                  <span className="sm:hidden">Docs</span>
                 </a>
               </Button>
             )}
             {model.announcementUrl && (
-              <Button variant="outline" asChild>
+              <Button variant="outline" asChild size="sm" className="sm:size-default">
                 <a href={model.announcementUrl} target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  Announcement
+                  <ExternalLink className="h-4 w-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Announcement</span>
+                  <span className="sm:hidden">News</span>
                 </a>
               </Button>
             )}
             {model.paperUrl && (
-              <Button variant="outline" asChild>
+              <Button variant="outline" asChild size="sm" className="sm:size-default">
                 <a href={model.paperUrl} target="_blank" rel="noopener noreferrer">
-                  <BookOpen className="h-4 w-4 mr-2" />
-                  Research Paper
+                  <BookOpen className="h-4 w-4 mr-1 sm:mr-2" />
+                  Paper
                 </a>
               </Button>
             )}
             {model.githubUrl && (
-              <Button variant="outline" asChild>
+              <Button variant="outline" asChild size="sm" className="sm:size-default">
                 <a href={model.githubUrl} target="_blank" rel="noopener noreferrer">
-                  <Github className="h-4 w-4 mr-2" />
+                  <Github className="h-4 w-4 mr-1 sm:mr-2" />
                   GitHub
                 </a>
               </Button>
@@ -156,21 +158,21 @@ export function ModelDetailClient({ model }: ModelDetailClientProps) {
           </div>
         </div>
 
-        <Separator className="my-8" />
+        <Separator className="my-4 sm:my-8" />
 
         {/* Tabs Section */}
-        <Tabs defaultValue="overview" className="space-y-8">
-          <TabsList className="flex-wrap h-auto gap-2">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="benchmarks">Benchmarks</TabsTrigger>
-            <TabsTrigger value="pricing">Pricing</TabsTrigger>
-            <TabsTrigger value="comparisons">Comparisons</TabsTrigger>
-            <TabsTrigger value="social">Social</TabsTrigger>
+        <Tabs defaultValue="overview" className="space-y-4 sm:space-y-8">
+          <TabsList className="w-full sm:w-auto flex-wrap h-auto gap-1 sm:gap-2 p-1">
+            <TabsTrigger value="overview" className="text-xs sm:text-sm px-2 sm:px-3">Overview</TabsTrigger>
+            <TabsTrigger value="benchmarks" className="text-xs sm:text-sm px-2 sm:px-3">Benchmarks</TabsTrigger>
+            <TabsTrigger value="pricing" className="text-xs sm:text-sm px-2 sm:px-3">Pricing</TabsTrigger>
+            <TabsTrigger value="comparisons" className="text-xs sm:text-sm px-2 sm:px-3">Compare</TabsTrigger>
+            <TabsTrigger value="social" className="text-xs sm:text-sm px-2 sm:px-3">Social</TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
-          <TabsContent value="overview" className="space-y-8">
-            <div className="grid md:grid-cols-2 gap-8">
+          <TabsContent value="overview" className="space-y-4 sm:space-y-8">
+            <div className="grid gap-4 sm:gap-8 md:grid-cols-2">
               {/* Key Highlights */}
               {highlights.length > 0 && (
                 <Card>
@@ -230,29 +232,29 @@ export function ModelDetailClient({ model }: ModelDetailClientProps) {
           </TabsContent>
 
           {/* Benchmarks Tab */}
-          <TabsContent value="benchmarks" className="space-y-6">
+          <TabsContent value="benchmarks" className="space-y-4 sm:space-y-6">
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5" />
+              <CardHeader className="pb-2 sm:pb-6">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                  <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5" />
                   Benchmark Results
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {Object.keys(benchmarks).length > 0 ? (
-                  <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
                     {Object.entries(benchmarks).map(([key, value]) => (
                       <div
                         key={key}
-                        className="bg-muted/50 rounded-lg p-4 text-center"
+                        className="bg-muted/50 rounded-lg p-2 sm:p-4 text-center"
                       >
-                        <div className="text-xs uppercase text-muted-foreground mb-1">
+                        <div className="text-[10px] sm:text-xs uppercase text-muted-foreground mb-1 truncate">
                           {key}
                         </div>
-                        <div className="text-3xl font-bold">{value}%</div>
-                        <div className="w-full bg-muted rounded-full h-2 mt-2">
+                        <div className="text-xl sm:text-3xl font-bold">{value}%</div>
+                        <div className="w-full bg-muted rounded-full h-1.5 sm:h-2 mt-2">
                           <div
-                            className="bg-primary h-2 rounded-full transition-all"
+                            className="bg-primary h-1.5 sm:h-2 rounded-full transition-all"
                             style={{ width: `${Math.min(value, 100)}%` }}
                           />
                         </div>
@@ -260,7 +262,7 @@ export function ModelDetailClient({ model }: ModelDetailClientProps) {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-muted-foreground text-center py-8">
+                  <p className="text-muted-foreground text-center py-6 sm:py-8 text-sm sm:text-base">
                     No benchmark data available yet.
                   </p>
                 )}
@@ -269,46 +271,46 @@ export function ModelDetailClient({ model }: ModelDetailClientProps) {
           </TabsContent>
 
           {/* Pricing Tab */}
-          <TabsContent value="pricing" className="space-y-6">
+          <TabsContent value="pricing" className="space-y-4 sm:space-y-6">
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <DollarSign className="h-5 w-5" />
+              <CardHeader className="pb-2 sm:pb-6">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                  <DollarSign className="h-4 w-4 sm:h-5 sm:w-5" />
                   Pricing Information
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {pricingInfo.input || pricingInfo.output ? (
-                  <div className="grid sm:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-2 gap-3 sm:gap-6">
                     {pricingInfo.input && (
-                      <div className="bg-muted/50 rounded-lg p-6 text-center">
-                        <div className="text-sm text-muted-foreground mb-2">
+                      <div className="bg-muted/50 rounded-lg p-3 sm:p-6 text-center">
+                        <div className="text-xs sm:text-sm text-muted-foreground mb-1 sm:mb-2">
                           Input Price
                         </div>
-                        <div className="text-3xl font-bold">
+                        <div className="text-xl sm:text-3xl font-bold">
                           ${pricingInfo.input}
                         </div>
-                        <div className="text-sm text-muted-foreground">
+                        <div className="text-[10px] sm:text-sm text-muted-foreground">
                           per 1M tokens
                         </div>
                       </div>
                     )}
                     {pricingInfo.output && (
-                      <div className="bg-muted/50 rounded-lg p-6 text-center">
-                        <div className="text-sm text-muted-foreground mb-2">
+                      <div className="bg-muted/50 rounded-lg p-3 sm:p-6 text-center">
+                        <div className="text-xs sm:text-sm text-muted-foreground mb-1 sm:mb-2">
                           Output Price
                         </div>
-                        <div className="text-3xl font-bold">
+                        <div className="text-xl sm:text-3xl font-bold">
                           ${pricingInfo.output}
                         </div>
-                        <div className="text-sm text-muted-foreground">
+                        <div className="text-[10px] sm:text-sm text-muted-foreground">
                           per 1M tokens
                         </div>
                       </div>
                     )}
                   </div>
                 ) : (
-                  <p className="text-muted-foreground text-center py-8">
+                  <p className="text-muted-foreground text-center py-6 sm:py-8 text-sm sm:text-base">
                     Pricing information not available yet.
                   </p>
                 )}
@@ -317,29 +319,29 @@ export function ModelDetailClient({ model }: ModelDetailClientProps) {
           </TabsContent>
 
           {/* Comparisons Tab */}
-          <TabsContent value="comparisons" className="space-y-6">
+          <TabsContent value="comparisons" className="space-y-4 sm:space-y-6">
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5" />
+              <CardHeader className="pb-2 sm:pb-6">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                  <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" />
                   Model Comparisons
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {comparisons.length > 0 ? (
-                  <div className="space-y-4">
+                  <div className="space-y-3 sm:space-y-4">
                     {comparisons.map((comp, i) => (
-                      <div key={i} className="border rounded-lg p-4">
-                        <div className="font-medium mb-2 flex items-center gap-2">
-                          <Users className="h-4 w-4" />
+                      <div key={i} className="border rounded-lg p-3 sm:p-4">
+                        <div className="font-medium mb-1 sm:mb-2 flex items-center gap-2 text-sm sm:text-base">
+                          <Users className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
                           vs {comp.model}
                         </div>
-                        <p className="text-muted-foreground">{comp.comparison}</p>
+                        <p className="text-muted-foreground text-sm sm:text-base">{comp.comparison}</p>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-muted-foreground text-center py-8">
+                  <p className="text-muted-foreground text-center py-6 sm:py-8 text-sm sm:text-base">
                     No comparison data available yet.
                   </p>
                 )}
@@ -348,37 +350,37 @@ export function ModelDetailClient({ model }: ModelDetailClientProps) {
           </TabsContent>
 
           {/* Social Tab */}
-          <TabsContent value="social" className="space-y-6">
+          <TabsContent value="social" className="space-y-4 sm:space-y-6">
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MessageSquare className="h-5 w-5" />
+              <CardHeader className="pb-2 sm:pb-6">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                  <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5" />
                   Social Media Posts
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {socialPosts.length > 0 ? (
-                  <div className="space-y-4">
+                  <div className="space-y-3 sm:space-y-4">
                     {socialPosts.map((post, i) => (
                       <a
                         key={i}
                         href={post.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block border rounded-lg p-4 hover:bg-muted/50 transition-colors"
+                        className="block border rounded-lg p-3 sm:p-4 hover:bg-muted/50 transition-colors"
                       >
-                        <div className="flex items-center gap-2 mb-2">
+                        <div className="flex items-center gap-2 mb-1 sm:mb-2">
                           {platformIcons[post.platform] || <ExternalLink className="h-4 w-4" />}
-                          <span className="font-medium capitalize">{post.platform}</span>
+                          <span className="font-medium capitalize text-sm sm:text-base">{post.platform}</span>
                         </div>
-                        <p className="text-muted-foreground line-clamp-3">
+                        <p className="text-muted-foreground line-clamp-3 text-sm sm:text-base">
                           {post.content}
                         </p>
                       </a>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-muted-foreground text-center py-8">
+                  <p className="text-muted-foreground text-center py-6 sm:py-8 text-sm sm:text-base">
                     No social media posts found yet.
                   </p>
                 )}
@@ -389,9 +391,9 @@ export function ModelDetailClient({ model }: ModelDetailClientProps) {
       </main>
 
       {/* Footer */}
-      <footer className="border-t mt-16">
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center text-sm text-muted-foreground">
+      <footer className="border-t mt-8 sm:mt-16">
+        <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
+          <div className="text-center text-xs sm:text-sm text-muted-foreground">
             Last updated: {format(new Date(model.updatedAt), 'MMM d, yyyy h:mm a')}
           </div>
         </div>
