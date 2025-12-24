@@ -1,65 +1,221 @@
-import Image from "next/image";
+'use client';
+
+import { useEffect, useState, useCallback } from 'react';
+import { Header } from '@/components/header';
+import { Timeline } from '@/components/timeline';
+import { SidebarFilters } from '@/components/sidebar-filters';
+import type { Model } from '@/lib/db/schema';
+import { formatDistanceToNow, isToday } from 'date-fns';
+
+interface ModelStats {
+  totalModels: number;
+  todayReleases: number;
+  providers: { name: string; count: number }[];
+  types: { name: string; count: number }[];
+}
 
 export default function Home() {
+  const [models, setModels] = useState<Model[]>([]);
+  const [filteredModels, setFilteredModels] = useState<Model[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<string>('');
+  const [selectedProviders, setSelectedProviders] = useState<string[]>([]);
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [stats, setStats] = useState<ModelStats>({
+    totalModels: 0,
+    todayReleases: 0,
+    providers: [],
+    types: [],
+  });
+
+  // Fetch models from API
+  const fetchModels = useCallback(async () => {
+    try {
+      const response = await fetch('/api/models');
+      const data = await response.json();
+
+      if (data.models) {
+        setModels(data.models);
+        calculateStats(data.models);
+        setLastUpdated(
+          data.cached
+            ? 'from cache'
+            : formatDistanceToNow(new Date(), { addSuffix: true })
+        );
+      }
+    } catch (error) {
+      console.error('Error fetching models:', error);
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
+    }
+  }, []);
+
+  // Calculate stats from models
+  const calculateStats = (modelList: Model[]) => {
+    const providerCounts: Record<string, number> = {};
+    const typeCounts: Record<string, number> = {};
+    let todayCount = 0;
+
+    for (const model of modelList) {
+      // Count by provider
+      providerCounts[model.provider] = (providerCounts[model.provider] || 0) + 1;
+
+      // Count by type
+      if (model.modelType) {
+        typeCounts[model.modelType] = (typeCounts[model.modelType] || 0) + 1;
+      }
+
+      // Count today's releases
+      if (isToday(new Date(model.releaseDate))) {
+        todayCount++;
+      }
+    }
+
+    setStats({
+      totalModels: modelList.length,
+      todayReleases: todayCount,
+      providers: Object.entries(providerCounts)
+        .map(([name, count]) => ({ name, count }))
+        .sort((a, b) => b.count - a.count),
+      types: Object.entries(typeCounts)
+        .map(([name, count]) => ({ name, count }))
+        .sort((a, b) => b.count - a.count),
+    });
+  };
+
+  // Filter models based on current filters
+  useEffect(() => {
+    let filtered = [...models];
+
+    // Filter by search query
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (model) =>
+          model.name.toLowerCase().includes(query) ||
+          model.provider.toLowerCase().includes(query) ||
+          model.description?.toLowerCase().includes(query)
+      );
+    }
+
+    // Filter by providers
+    if (selectedProviders.length > 0) {
+      filtered = filtered.filter((model) =>
+        selectedProviders.includes(model.provider)
+      );
+    }
+
+    // Filter by types
+    if (selectedTypes.length > 0) {
+      filtered = filtered.filter(
+        (model) => model.modelType && selectedTypes.includes(model.modelType)
+      );
+    }
+
+    setFilteredModels(filtered);
+  }, [models, searchQuery, selectedProviders, selectedTypes]);
+
+  // Initial fetch
+  useEffect(() => {
+    fetchModels();
+  }, [fetchModels]);
+
+  // Handle refresh
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    fetchModels();
+  };
+
+  // Handle search
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  // Handle provider filter
+  const handleProviderToggle = (provider: string) => {
+    setSelectedProviders((prev) =>
+      prev.includes(provider)
+        ? prev.filter((p) => p !== provider)
+        : [...prev, provider]
+    );
+  };
+
+  // Handle type filter
+  const handleTypeToggle = (type: string) => {
+    setSelectedTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+    );
+  };
+
+  // Clear all filters
+  const handleClearFilters = () => {
+    setSelectedProviders([]);
+    setSelectedTypes([]);
+    setSearchQuery('');
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen bg-background">
+      <Header
+        onSearch={handleSearch}
+        onFilterProvider={(provider) => {
+          if (provider) {
+            setSelectedProviders([provider]);
+          } else {
+            setSelectedProviders([]);
+          }
+        }}
+        onRefresh={handleRefresh}
+        isRefreshing={isRefreshing}
+        lastUpdated={lastUpdated}
+      />
+
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Sidebar */}
+          <aside className="w-full lg:w-72 shrink-0">
+            <div className="sticky top-24">
+              <SidebarFilters
+                selectedProviders={selectedProviders}
+                selectedTypes={selectedTypes}
+                onProviderToggle={handleProviderToggle}
+                onTypeToggle={handleTypeToggle}
+                onClearFilters={handleClearFilters}
+                stats={stats}
+              />
+            </div>
+          </aside>
+
+          {/* Main Content */}
+          <main className="flex-1 min-w-0">
+            <div className="mb-6">
+              <h1 className="text-3xl font-bold mb-2">AI Model Releases</h1>
+              <p className="text-muted-foreground">
+                Track the latest AI model releases from leading labs. Updated every 4 hours.
+              </p>
+            </div>
+
+            <Timeline models={filteredModels} isLoading={isLoading} />
+          </main>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </div>
+
+      {/* Footer */}
+      <footer className="border-t mt-16">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-muted-foreground">
+              Powered by AI research agents using Perplexity, Grok, and Gemini.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Data sourced from official announcements and documentation.
+            </p>
+          </div>
         </div>
-      </main>
+      </footer>
     </div>
   );
 }
